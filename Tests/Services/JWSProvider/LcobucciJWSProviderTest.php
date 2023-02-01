@@ -78,7 +78,8 @@ rT9kcwLvwUGRmm5HVAz06a9t6gOj0pvoR2oOn9GS7zWCxd3f8vL7nA==
             ->expects($this->once())
             ->method('loadKey')
             ->with('private')
-            ->willReturn(<<<EOF
+            ->willReturn(
+                <<<EOF
 -----BEGIN EC PRIVATE KEY-----
 MIHcAgEBBEIB+EYtmPtvg88MzxsRzgDGlKh+Z/iU99nmgKUjnw7+3eePeNQjaALU
 DH+P7PNnF9nwfmQGTUBgQwtznmLAQcVdB3GgBwYFK4EEACOhgYkDgYYABAFp/WFf
@@ -87,14 +88,14 @@ c+pDtNlumEvaA05RzwAGHve4mIi7RWaRQ2yAZfElRRV5f73h8eaG8qyNp6OtpuUO
 TkeeWHzDF5tKLvuO0HGEX9N7Fn0dOBWZYVSDk/iaZw==
 -----END EC PRIVATE KEY-----
 EOF
-        );
+            );
         $keyLoaderMock
             ->expects($this->once())
             ->method('getPassphrase')
             ->willReturn(null);
 
         $payload = ['username' => 'chalasr'];
-        $jwsProvider = new LcobucciJWSProvider($keyLoaderMock, 'openssl', 'ES512', 3600, 0);
+        $jwsProvider = new LcobucciJWSProvider($keyLoaderMock, 'ES512', 3600, 0);
 
         $this->assertInstanceOf(CreatedJWS::class, $created = $jwsProvider->create($payload));
 
@@ -114,7 +115,7 @@ EOF
             ->method('getAdditionalPublicKeys')
             ->willReturn(self::$additionalPublicKeys);
 
-        $jwsProvider = new self::$providerClass($keyLoaderMock, 'openssl', 'RS256', 3600, 0);
+        $jwsProvider = new self::$providerClass($keyLoaderMock, 'RS256', 3600, 0);
         $loadedJWS = $jwsProvider->load($this->createMultiplePublicKeysTestToken());
 
         $this->assertTrue($loadedJWS->isVerified());
@@ -133,7 +134,7 @@ EOF
             ->method('getAdditionalPublicKeys')
             ->willReturn([self::$additionalPublicKeys[0]]); // Only try with the wrong additional public key
 
-        $jwsProvider = new self::$providerClass($keyLoaderMock, 'openssl', 'RS256', 3600, 0);
+        $jwsProvider = new self::$providerClass($keyLoaderMock, 'RS256', 3600, 0);
         $loadedJWS = $jwsProvider->load($this->createMultiplePublicKeysTestToken());
 
         $this->assertFalse($loadedJWS->isVerified());
@@ -149,7 +150,7 @@ EOF
             ->willReturn(self::$multiplePublicKeysTestTokenPrivateKey);
 
         $payload = ['username' => 'chalasr', 'iat' => time()];
-        $jwsProvider = new self::$providerClass($keyLoaderMock, 'openssl', 'RS256', 3600, 0);
+        $jwsProvider = new self::$providerClass($keyLoaderMock, 'RS256', 3600, 0);
 
         return $jwsProvider->create($payload)->getToken();
     }

@@ -8,6 +8,7 @@ use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\PathItem;
 use ApiPlatform\OpenApi\Model\RequestBody;
 use ApiPlatform\OpenApi\OpenApi;
+use ArrayObject;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -19,12 +20,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class OpenApiFactory implements OpenApiFactoryInterface
 {
-    /**
-     * @var OpenApiFactoryInterface
-     */
-    private $decorated;
+    private OpenApiFactoryInterface $decorated;
 
-    private $checkPath;
+    private string $checkPath;
 
     public function __construct(OpenApiFactoryInterface $decorated, string $checkPath)
     {
@@ -41,7 +39,8 @@ class OpenApiFactory implements OpenApiFactoryInterface
 
         $openApi
             ->getPaths()
-            ->addPath($this->checkPath, (new PathItem())->withPost((new Operation())
+            ->addPath($this->checkPath, (new PathItem())->withPost(
+                (new Operation())
                 ->withOperationId('login_check_post')
                 ->withTags(['Login Check'])
                 ->withResponses([
@@ -65,10 +64,11 @@ class OpenApiFactory implements OpenApiFactoryInterface
                     ],
                 ])
                 ->withSummary('Creates a user token.')
-                ->withRequestBody((new RequestBody())
+                ->withRequestBody(
+                    (new RequestBody())
                     ->withDescription('The login data')
-                    ->withContent(new \ArrayObject([
-                        'application/json' => new MediaType(new \ArrayObject(new \ArrayObject([
+                    ->withContent(new ArrayObject([
+                        'application/json' => new MediaType(new ArrayObject(new ArrayObject([
                             'type' => 'object',
                             'properties' => [
                                 '_username' => [
