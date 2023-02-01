@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\PhpVersion;
-use Rector\Doctrine\Set\DoctrineSetList;
-use Rector\Php74\Rector\Property\TypedPropertyRector;
+use Rector\Php73\Rector\FuncCall\JsonThrowOnErrorRector;
+use Rector\PHPUnit\Rector\Class_\AddSeeTestAnnotationRector;
+use Rector\PHPUnit\Set\PHPUnitLevelSetList;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
@@ -14,24 +15,35 @@ use Rector\Symfony\Set\SymfonySetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_71,
-        SymfonyLevelSetList::UP_TO_SYMFONY_44,
-        SymfonySetList::SYMFONY_STRICT,
+        SetList::DEAD_CODE,
+        LevelSetList::UP_TO_PHP_81,
+        SymfonyLevelSetList::UP_TO_SYMFONY_54,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
+        PHPUnitSetList::PHPUNIT_SPECIFIC_METHOD,
+        PHPUnitLevelSetList::UP_TO_PHPUNIT_100,
+        PHPUnitSetList::PHPUNIT_CODE_QUALITY,
+        PHPUnitSetList::PHPUNIT_EXCEPTION,
+        PHPUnitSetList::REMOVE_MOCKS,
+        PHPUnitSetList::PHPUNIT_YIELD_DATA_PROVIDER,
     ]);
-    $rectorConfig->phpVersion(PhpVersion::PHP_71);
+    $rectorConfig->phpVersion(PhpVersion::PHP_74);
     $rectorConfig->importShortClasses();
+    $rectorConfig->importNames();
     $rectorConfig->bootstrapFiles([
         __DIR__ . '/vendor/autoload.php',
     ]);
+    $rectorConfig->parallel();
     $rectorConfig->paths([__DIR__]);
     $rectorConfig->skip([
+        // Path
         __DIR__ . '/.github',
+        __DIR__ . '/DependencyInjection/Configuration.php',
         __DIR__ . '/Tests/DependencyInjection/LexikJWTAuthenticationExtensionTest.php',
         __DIR__ . '/vendor',
-    ]);
 
-    $services = $rectorConfig->services();
-    $services->set(TypedPropertyRector::class);
+        // Rules
+        AddSeeTestAnnotationRector::class,
+        JsonThrowOnErrorRector::class,
+    ]);
 };
