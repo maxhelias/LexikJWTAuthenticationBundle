@@ -12,6 +12,7 @@ use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 use Rector\Symfony\Set\SymfonyLevelSetList;
 use Rector\Symfony\Set\SymfonySetList;
+use Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
@@ -45,5 +46,8 @@ return static function (RectorConfig $rectorConfig): void {
         // Rules
         AddSeeTestAnnotationRector::class,
         JsonThrowOnErrorRector::class,
+        ReturnNeverTypeRector::class => [
+            __DIR__ . '/Security/User/JWTUserProvider.php',
+        ],
     ]);
 };
